@@ -1,27 +1,54 @@
 import "./style.css";
-import javascriptLogo from "./javascript.svg";
-import viteLogo from "/vite.svg";
-import { setupCounter } from "./counter.js";
-
 import * as THREE from "three";
-console.log(THREE);
 
-document.querySelector("#app").innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`;
+//canvas
+const canvas = document.querySelector("#webgl");
 
-setupCounter(document.querySelector("#counter"));
+//シーン
+const scene = new THREE.Scene();
+
+//背景
+const textureLoader = new THREE.TextureLoader();
+const bgTexture = textureLoader.load("bg.jpg");
+scene.background = bgTexture;
+
+//サイズ
+const sizes = {
+  width: innerWidth,
+  height: innerHeight,
+};
+
+//カメラ
+const camera = new THREE.PerspectiveCamera(
+  75,
+  sizes.width / sizes.height,
+  0.1,
+  1000
+);
+
+//レンダラー
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvas,
+});
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+//アニメーション
+const tick = () => {
+  window.requestAnimationFrame(tick);
+  renderer.render(scene, camera);
+};
+
+tick();
+
+//ブラウザのリサイズ操作
+window.addEventListener("resize", () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(sizes.width, sizes.height);
+  renderer.setPixelRatio(window.devicePixelRatio);
+});
