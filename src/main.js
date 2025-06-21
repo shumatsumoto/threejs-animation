@@ -47,9 +47,40 @@ torus.position.set(0, 1, 10);
 
 scene.add(box, torus);
 
+//スクロールアニメーション
+const animationScripts = [];
+animationScripts.push({
+  start: 0,
+  end: 40,
+  function() {
+    camera.lookAt(box.position);
+    camera.position.set(0, 1, 10);
+    box.position.z += 0.01;
+  },
+});
+
+//アニメーション開始
+function playScrollAnimation() {
+  animationScripts.forEach((animation) => {
+    animation.function();
+  });
+}
+
+// ブラウザのスクロール率
+let scrollPercent = 0;
+document.body.onscroll = () => {
+  scrollPercent =
+    (document.documentElement.scrollTop /
+      (document.documentElement.scrollHeight -
+        document.documentElement.clientHeight)) *
+    100;
+  console.log(scrollPercent);
+};
+
 //アニメーション
 const tick = () => {
   window.requestAnimationFrame(tick);
+  playScrollAnimation();
   renderer.render(scene, camera);
 };
 
